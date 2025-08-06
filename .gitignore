@@ -22,7 +22,9 @@ autoscan.log
 uuid.pc
 *.tar.gz
 *.o
+*.a
 *.la
 *.lo
 .deps/
 .libs/
+test
