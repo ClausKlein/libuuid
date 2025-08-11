@@ -1,11 +1,6 @@
 #pragma once
 
 // file sysdep.h
-#include "copyrt.h"
-
-/* change to point to where MD5 .h's live; RFC 1321 has sample
-   implementation */
-#include "md5.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -22,6 +17,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 #endif
+
+/* change to point to where MD5 .h's live; RFC 1321 has sample
+   implementation */
+#include "copyrt.h"
+#include "md5.h"
 
 /* TODO(CK): set the following to the number of 100ns ticks of the actual
    resolution of your system's clock */

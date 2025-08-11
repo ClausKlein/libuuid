@@ -20,11 +20,11 @@ documentation and/or software.
 #define MD 5
 #endif
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-#include "global.h"
 #include "md5.h"
 
 /* Length of test block, number of test blocks.
@@ -35,7 +35,7 @@ documentation and/or software.
 static void MDString PROTO_LIST((char *));
 static void MDTimeTrial PROTO_LIST((void));
 static void MDTestSuite PROTO_LIST((void));
-static void MDFile PROTO_LIST((char *));
+static void MDFile PROTO_LIST((const char *));
 static void MDFilter PROTO_LIST((void));
 static void MDPrint PROTO_LIST((unsigned char[16]));
 
@@ -90,7 +90,7 @@ static void MDString(char *string) {
 
     printf("MD%d (\"%s\") = ", MD, string);
     MDPrint(digest);
-    printf("\n");
+    putchar('\n');
 }
 
 /* Measures the time to digest TEST_BLOCK_COUNT TEST_BLOCK_LEN-byte
@@ -128,11 +128,11 @@ static void MDTimeTrial() {
     printf(" done\n");
     printf("Digest = ");
     MDPrint(digest);
-    printf("\nTime = %ld seconds\n", (long)(endTime - startTime));
+    printf("\nTime = %" PRIdMAX " seconds\n", (intmax_t)(endTime - startTime));
     if (endTime != startTime) {
-        printf("Speed = %ld bytes/second\n", (long)TEST_BLOCK_LEN *
-                                                     (long)TEST_BLOCK_COUNT /
-                                                     (endTime - startTime));
+        printf("Speed = %" PRIdMAX " bytes/second\n",
+               TEST_BLOCK_LEN * TEST_BLOCK_COUNT /
+                       (intmax_t)(endTime - startTime));
     }
 }
 
@@ -154,46 +154,48 @@ static void MDTestSuite() {
 
 /* Digests a file and prints the result.
  */
-static void MDFile(char *filename) {
+static void MDFile(const char *filename) {
     FILE *file;
     MD_CTX context;
-    int len;
+    size_t len;
     unsigned char buffer[1024];
     unsigned char digest[16];
 
-    if ((file = fopen(filename, "rb")) == NULL) {
+    file = fopen(filename, "rb");
+    if (!file) {
         printf("%s can't be opened\n", filename);
-    } else {
-        MDInit(&context);
-        while (len = fread(buffer, 1, 1024, file)) {
-            MDUpdate(&context, buffer, len);
-        }
-        MDFinal(digest, &context);
-
-        fclose(file);
-
-        printf("MD%d (%s) = ", MD, filename);
-        MDPrint(digest);
-        printf("\n");
+        return;
     }
+
+    MDInit(&context);
+    while ((len = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        MDUpdate(&context, buffer, len);
+    }
+    MDFinal(digest, &context);
+
+    fclose(file);
+
+    printf("MD%d (%s) = ", MD, filename);
+    MDPrint(digest);
+    putchar('\n');
 }
 
 /* Digests the standard input and prints the result.
  */
-static void MDFilter() {
+static void MDFilter(void) {
     MD_CTX context;
-    int len;
+    size_t len;
     unsigned char buffer[16];
     unsigned char digest[16];
 
     MDInit(&context);
-    while (len = fread(buffer, 1, 16, stdin)) {
+    while ((len = fread(buffer, 1, sizeof(buffer), stdin)) > 0) {
         MDUpdate(&context, buffer, len);
     }
     MDFinal(digest, &context);
 
     MDPrint(digest);
-    printf("\n");
+    putchar('\n');
 }
 
 /* Prints a message digest in hexadecimal.

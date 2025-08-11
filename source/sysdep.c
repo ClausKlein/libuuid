@@ -1,5 +1,4 @@
 // file sysdep.c
-
 #include "sysdep.h"
 
 #include <stdint.h>
@@ -81,8 +80,8 @@ void get_random_info(char seed[16]) {
 
     r.l = MAX_COMPUTERNAME_LENGTH + 1;
     GetComputerName(r.hostname, &r.l);
-    MD5Update(&c, &r, sizeof r);
-    MD5Final(seed, &c);
+    MD5Update(&c, (unsigned char *)&r, sizeof r);
+    MD5Final((unsigned char *)seed, &c);
 }
 
 #else

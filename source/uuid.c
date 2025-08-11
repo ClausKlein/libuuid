@@ -2,7 +2,11 @@
 
 #include "uuid.h"
 
-#include <arpa/inet.h>  // htonl
+#ifdef _WIN32
+#include <winsock2.h>  // for htonl
+#else
+#include <arpa/inet.h>  // for htonl
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
