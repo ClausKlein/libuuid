@@ -1,3 +1,13 @@
+#
+# Standard stuff
+#
+#XXX .SUFFIXES:
+
+# Disable the built-in implicit rules.
+#XXX MAKEFLAGS += --no-builtin-rules
+
+.PHONY: all test check clean distclean
+
 CFLAGS:=-Wall -Wextra -Wpedantic
 
 all: libuuid.a

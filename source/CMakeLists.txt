@@ -36,7 +36,7 @@ if(CMAKE_SKIP_INSTALL_RULES)
     return()
 endif()
 
-install(FILES uuid.h DESTINATION include/uuid)
+install(FILES uuid.h copyrt.h DESTINATION include/uuid)
 
 install(
     TARGETS uuid
