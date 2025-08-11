@@ -20,7 +20,7 @@ static int read_state(uint16_t *clockseq, uuid_time_t *timestamp,
                       uuid_node_t *node);
 static void write_state(uint16_t clockseq, uuid_time_t timestamp,
                         uuid_node_t node);
-static void format_uuid_v1(_uuid_t *uuid, uint16_t clockseq,
+static void format_uuid_v1(_uuid_t *uuid, uint16_t clock_seq,
                            uuid_time_t timestamp, uuid_node_t node);
 
 static void format_uuid_v3or5(_uuid_t *uuid, unsigned char hash[16], int v);
@@ -175,7 +175,7 @@ void get_current_time(uuid_time_t *timestamp) {
 }
 
 /* true_random -- generate a crypto-quality random number.
- **This sample doesn't do that.** */
+ **TODO(CK): This sample doesn't do that.** */
 static uint16_t true_random(void) {
     static int inited = 0;
     uuid_time_t time_now;
@@ -187,7 +187,7 @@ static uint16_t true_random(void) {
         inited = 1;
     }
 
-    return rand();
+    return get_secure_random();  // XXX rand();
 }
 
 /* uuid_create_md5_from_name -- create a version 3 (MD5) UUID using a

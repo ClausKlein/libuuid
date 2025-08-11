@@ -133,3 +133,45 @@ void get_random_info(char seed[16]) {
 }
 
 #endif
+
+#if defined(_WIN32)
+#include <wincrypt.h>
+#include <windows.h>
+
+uint32_t get_secure_random(void) {
+    uint32_t num = 0;
+    HCRYPTPROV hProv = 0;
+    if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL,
+                             CRYPT_VERIFYCONTEXT))
+        return 0;  // error
+    if (!CryptGenRandom(hProv, sizeof(num), (BYTE *)&num))
+        num = 0;  // error
+    CryptReleaseContext(hProv, 0);
+    return num;
+}
+
+#elif defined(__linux__)
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <unistd.h>
+
+uint32_t get_secure_random(void) {
+    uint32_t num;
+    int fd = open("/dev/urandom", O_RDONLY);
+    if (fd < 0)
+        return 0;  // error
+
+    ssize_t result = read(fd, &num, sizeof(num));
+    close(fd);
+    if (result != sizeof(num))
+        return 0;  // error
+
+    return num;
+}
+
+#else                // BSD/macOS and others
+#include <stdlib.h>  // arc4random
+
+uint32_t get_secure_random(void) { return arc4random(); }
+#endif

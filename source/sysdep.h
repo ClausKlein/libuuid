@@ -49,3 +49,4 @@ typedef struct {
 void get_ieee_node_identifier(uuid_node_t *node);
 void get_system_time(uuid_time_t *uuid_time);
 void get_random_info(char seed[16]);
+uint32_t get_secure_random(void);

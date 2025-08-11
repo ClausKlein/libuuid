@@ -47,11 +47,14 @@ documentation and/or software.
 #define S43 15
 #define S44 21
 
-static void MD5Transform(uint64_t[4], uint8_t[64]);
-static void Encode(uint8_t *, uint64_t *, unsigned int);
-static void Decode(uint64_t *, uint8_t *, unsigned int);
-static void MD5_memcpy(POINTER, POINTER, unsigned int);
-static void MD5_memset(POINTER, int, unsigned int);
+static void MD5Transform(uint64_t /*state*/[4], uint8_t /*block*/[64]);
+static void Encode(uint8_t * /*output*/, const uint64_t * /*input*/,
+                   unsigned int /*len*/);
+static void Decode(uint64_t * /*output*/, const uint8_t * /*input*/,
+                   unsigned int /*len*/);
+static void MD5_memcpy(POINTER /*output*/, const POINTER /*input*/,
+                       unsigned int /*len*/);
+static void MD5_memset(POINTER /*output*/, int /*value*/, unsigned int /*len*/);
 
 static uint8_t PADDING[64] = {
         0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -282,7 +285,7 @@ static void MD5Transform(uint64_t state[4], uint8_t block[64]) {
 /* Encodes input (uint64_t) into output (uint8_t). Assumes len is
   a multiple of 4.
  */
-static void Encode(uint8_t *output, uint64_t *input, unsigned int len) {
+static void Encode(uint8_t *output, const uint64_t *input, unsigned int len) {
     unsigned int i;
     unsigned int j;
 
@@ -297,7 +300,7 @@ static void Encode(uint8_t *output, uint64_t *input, unsigned int len) {
 /* Decodes input (uint8_t) into output (uint64_t). Assumes len is
   a multiple of 4.
  */
-static void Decode(uint64_t *output, uint8_t *input, unsigned int len) {
+static void Decode(uint64_t *output, const uint8_t *input, unsigned int len) {
     unsigned int i;
     unsigned int j;
 
@@ -311,7 +314,7 @@ static void Decode(uint64_t *output, uint8_t *input, unsigned int len) {
 /* Note: Replace "for loop" with standard memcpy if possible.
  */
 
-static void MD5_memcpy(POINTER output, POINTER input, unsigned int len) {
+static void MD5_memcpy(POINTER output, const POINTER input, unsigned int len) {
     unsigned int i;
 
     for (i = 0; i < len; i++) {
