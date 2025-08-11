@@ -1,3 +1,5 @@
+CFLAGS:=-Wall -Wextra -Wpedantic
+
 all: libuuid.a
 
 libuuid.a: libuuid.o
@@ -5,7 +7,6 @@ libuuid.a: libuuid.o
 
 libuuid.o: *.h
 libuuid.o: libuuid.c
-	gcc -c $< -o $@
 
 test_uuid: LDLIBS:=libuuid.a
 test_uuid: libuuid.a
@@ -14,5 +15,11 @@ test: test_uuid
 	./test_uuid
 
 install: test
-	cp uuid.h ${HOME}/.local/include
-	cp libuuid.a ${HOME}/.local/lib
+	install -v uuid.h ${HOME}/.local/include/uuid
+	install -v libuuid.a ${HOME}/.local/lib
+
+clean:
+	$(RM) *.o *.a *~
+
+distclean:
+	git clean -xdf

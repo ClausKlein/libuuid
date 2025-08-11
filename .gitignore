@@ -27,4 +27,5 @@ uuid.pc
 *.lo
 .deps/
 .libs/
-test
+test_uuid
+build/

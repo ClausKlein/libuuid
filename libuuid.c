@@ -1,5 +1,6 @@
-#define HAVE_CONFIG_H
+#undef HAVE_CONFIG_H
 
+#include "_config.h"
 #include "clear.c"
 #include "compare.c"
 #include "copy.c"
