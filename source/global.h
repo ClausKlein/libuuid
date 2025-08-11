@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 /* PROTOTYPES should be set to one if and only if the compiler supports
   function argument prototyping.
 The following makes PROTOTYPES default to 0 if it has not already
@@ -13,13 +15,13 @@ The following makes PROTOTYPES default to 0 if it has not already
 #endif
 
 /* POINTER defines a generic pointer type */
-typedef unsigned char *POINTER;
+typedef uint8_t *POINTER;
 
 /* UINT2 defines a two byte word */
-typedef unsigned short int UINT2;
+// XXX typedef unsigned short int UINT2;
 
 /* UINT4 defines a four byte word */
-typedef unsigned long int UINT4;
+// XXX typedef unsigned long int UINT4;
 
 /* PROTO_LIST is defined depending on how PROTOTYPES is defined above.
 If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it

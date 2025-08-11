@@ -20,7 +20,7 @@ documentation and/or software.
 #define MD 5
 #endif
 
-#include <inttypes.h>
+#include <inttypes.h>  // for PRIdMAX
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -32,12 +32,12 @@ documentation and/or software.
 #define TEST_BLOCK_LEN 1000
 #define TEST_BLOCK_COUNT 1000
 
-static void MDString PROTO_LIST((char *));
-static void MDTimeTrial PROTO_LIST((void));
-static void MDTestSuite PROTO_LIST((void));
-static void MDFile PROTO_LIST((const char *));
-static void MDFilter PROTO_LIST((void));
-static void MDPrint PROTO_LIST((unsigned char[16]));
+static void MDString(char *);
+static void MDTimeTrial(void);
+static void MDTestSuite(void);
+static void MDFile(const char *);
+static void MDFilter(void);
+static void MDPrint(unsigned char[16]);
 
 #if MD == 5
 #define MD_CTX MD5_CTX

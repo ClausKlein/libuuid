@@ -1,6 +1,7 @@
 #pragma once
 
 // file sysdep.h
+#include <stdint.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -27,25 +28,20 @@
    resolution of your system's clock */
 #define UUIDS_PER_TICK 1024
 
-/* Set the following to a calls to get and release a global lock */
+/* TODO(CK): Set the following to a calls to get and release a global lock */
 #define LOCK
 #define UNLOCK
 
-typedef unsigned long unsigned32;
-typedef unsigned short unsigned16;
-typedef unsigned char unsigned8;
-typedef unsigned char byte;
-
 /* Set this to what your compiler uses for 64-bit data type */
 #ifdef _WIN32
-#define unsigned64_t unsigned __int64
+// XXX #define unsigned64_t unsigned __int64
 #define I64(C) C
 #else
-#define unsigned64_t unsigned long long
+// XXX #define unsigned64_t unsigned long long
 #define I64(C) C##LL
 #endif
 
-typedef unsigned64_t uuid_time_t;
+typedef uint64_t uuid_time_t;
 typedef struct {
     char nodeID[6];
 } uuid_node_t;

@@ -38,6 +38,7 @@ int uuid_create(_uuid_t *uuid) {
 
     /* acquire system-wide lock so we're alone */
     LOCK;
+
     /* get time, node ID, saved state from non-volatile storage */
     get_current_time(&timestamp);
     get_ieee_node_identifier(&node);

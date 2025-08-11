@@ -1,4 +1,5 @@
 // file sysdep.c
+
 #include "sysdep.h"
 
 #include <stdint.h>
@@ -15,28 +16,38 @@ void get_ieee_node_identifier(uuid_node_t *node) {
     char seed[16];
     const char *filename = "nodeid";
     FILE *fp;
+    int success = 0;
 
     if (!inited) {
         fp = fopen(filename, "rb");
         if (fp) {
-            if (fread(&saved_node, sizeof(saved_node), 1, fp) != 1) {
-                // Handle read error if needed
-                memset(&saved_node, 0, sizeof(saved_node));
+            if (fread(&saved_node, sizeof(saved_node), 1, fp) == 1) {
+                success = 1;  // Successfully read node from file
             }
             fclose(fp);
-        } else {
+        }
+
+        if (!success) {
             get_random_info(seed);
             seed[0] |= 0x01;  // Set multicast bit per RFC 4122
             memcpy(&saved_node, seed, sizeof(saved_node));
+
             fp = fopen(filename, "wb");
             if (fp) {
-                if (fwrite(&saved_node, sizeof(saved_node), 1, fp) != 1) {
-                    // TODO(CK): Handle write error if needed
+                if (fwrite(&saved_node, sizeof(saved_node), 1, fp) == 1) {
+                    success = 1;  // Successfully wrote node to file
                 }
                 fclose(fp);
             }
         }
-        inited = 1;
+
+        if (success) {
+            inited = 1;
+        } else {
+            // Handle failure: no valid saved_node available
+            memset(&saved_node, 0, sizeof(saved_node));
+            // You might want to log this error or handle differently
+        }
     }
 
     *node = saved_node;
@@ -55,11 +66,9 @@ void get_system_time(uuid_time_t *uuid_time) {
        The difference is 17 Days in Oct + 30 (Nov) + 31 (Dec)
        + 18 years and 5 leap days. */
     GetSystemTimeAsFileTime((FILETIME *)&time);
-    time.QuadPart +=
-
-            (unsigned __int64)(1000 * 1000 * 10)                // seconds
-            * (unsigned __int64)(60 * 60 * 24)                  // days
-            * (unsigned __int64)(17 + 30 + 31 + 365 * 18 + 5);  // # of days
+    time.QuadPart += (uint64_t)(1000 * 1000 * 10)                // seconds
+                     * (uint64_t)(60 * 60 * 24)                  // days
+                     * (uint64_t)(17 + 30 + 31 + 365 * 18 + 5);  // # of days
     *uuid_time = time.QuadPart;
 }
 
@@ -82,11 +91,10 @@ void get_random_info(char seed[16]) {
     GetSystemTimeAsFileTime(&r.t);
     QueryPerformanceCounter(&r.pc);
     r.tc = GetTickCount();
-
     r.l = MAX_COMPUTERNAME_LENGTH + 1;
     GetComputerName(r.hostname, &r.l);
-    MD5Update(&c, (unsigned char *)&r, sizeof r);
-    MD5Final((unsigned char *)seed, &c);
+    MD5Update(&c, (uint8_t *)&r, sizeof r);
+    MD5Final((uint8_t *)seed, &c);
 }
 
 #else
@@ -120,8 +128,8 @@ void get_random_info(char seed[16]) {
 #endif
     gettimeofday(&r.t, (struct timezone *)0);
     gethostname(r.hostname, 256);
-    MD5Update(&c, (unsigned char *)&r, sizeof r);
-    MD5Final((unsigned char *)seed, &c);
+    MD5Update(&c, (uint8_t *)&r, sizeof r);
+    MD5Final((uint8_t *)seed, &c);
 }
 
 #endif
