@@ -13,24 +13,29 @@ void get_ieee_node_identifier(uuid_node_t *node) {
     static int inited = 0;
     static uuid_node_t saved_node;
     char seed[16];
+    const char *filename = "nodeid";
     FILE *fp;
 
     if (!inited) {
-        fp = fopen("nodeid", "rb");
+        fp = fopen(filename, "rb");
         if (fp) {
-            fread(&saved_node, sizeof saved_node, 1, fp);
+            if (fread(&saved_node, sizeof(saved_node), 1, fp) != 1) {
+                // Handle read error if needed
+                memset(&saved_node, 0, sizeof(saved_node));
+            }
             fclose(fp);
         } else {
             get_random_info(seed);
-            seed[0] |= 0x01;
-            memcpy(&saved_node, seed, sizeof saved_node);
-            fp = fopen("nodeid", "wb");
+            seed[0] |= 0x01;  // Set multicast bit per RFC 4122
+            memcpy(&saved_node, seed, sizeof(saved_node));
+            fp = fopen(filename, "wb");
             if (fp) {
-                fwrite(&saved_node, sizeof saved_node, 1, fp);
+                if (fwrite(&saved_node, sizeof(saved_node), 1, fp) != 1) {
+                    // TODO(CK): Handle write error if needed
+                }
                 fclose(fp);
             }
         }
-
         inited = 1;
     }
 
