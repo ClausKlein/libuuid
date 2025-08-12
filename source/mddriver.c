@@ -168,6 +168,7 @@ static void MDFile(const char *filename) {
     }
 
     MDInit(&context);
+    // NOLINTNEXTLINE(clang-analyzer-unix.Stream)
     while ((len = fread(buffer, 1, sizeof(buffer), file)) > 0) {
         MDUpdate(&context, buffer, len);
     }

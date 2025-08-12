@@ -6,7 +6,7 @@
 # Disable the built-in implicit rules.
 MAKEFLAGS += --no-builtin-rules
 
-export CC:=clang-22
+export CC:=clang
 export CCFLAGS:=-Wall -Wextra -Wpedantic
 
 .PHONY: all check clean distclean
@@ -18,12 +18,12 @@ build:
 	cmake -S . -B build
 
 check: build
-	# run-clang-tidy -p build -checks='-*,clang-analyzer-*' -warnings-as-errors='*'
-	run-clang-tidy-22 -p build -checks='-*,cert-*' -warnings-as-errors='*'
-	run-clang-tidy-22 -p build -checks='-*,cert-*,portability-*,performance-*,readability-*,-readability-magic-numbers,-readability-identifier-*'
+	run-clang-tidy -p build -checks='-*,clang-analyzer-*' -warnings-as-errors='*'
+	run-clang-tidy -p build -checks='-*,cert-*' -warnings-as-errors='*'
+	run-clang-tidy -p build -checks='-*,cert-*,portability-*,performance-*,readability-*,-readability-magic-numbers,-readability-identifier-*'
 
 fix: build
-	run-clang-tidy-22 -p build -checks='-*,\
+	run-clang-tidy -p build -checks='-*,\
 readability-braces-around-statements,\
 readability-use-concise-preprocessor-directives,\
 readability-inconsistent-declaration-parameter-name,\
