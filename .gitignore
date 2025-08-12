@@ -25,6 +25,8 @@ uuid.pc
 *.a
 *.la
 *.lo
+*.bak
+.*.swp
 .deps/
 .libs/
 test_uuid

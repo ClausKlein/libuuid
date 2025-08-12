@@ -24,7 +24,7 @@ void get_ieee_node_identifier(uuid_node_t *node) {
             if (fread(&saved_node, sizeof(saved_node), 1, fp) == 1) {
                 success = 1;  // Successfully read node from file
             }
-            fclose(fp);
+            (void)fclose(fp);
         }
 
         if (!success) {
@@ -37,7 +37,7 @@ void get_ieee_node_identifier(uuid_node_t *node) {
                 if (fwrite(&saved_node, sizeof(saved_node), 1, fp) == 1) {
                     success = 1;  // Successfully wrote node to file
                 }
-                fclose(fp);
+                (void)fclose(fp);
             }
         }
 
@@ -46,7 +46,7 @@ void get_ieee_node_identifier(uuid_node_t *node) {
         } else {
             // Handle failure: no valid saved_node available
             memset(&saved_node, 0, sizeof(saved_node));
-            // You might want to log this error or handle differently
+            // TODO(CK): You might want to log this error or handle differently
         }
     }
 
@@ -134,7 +134,7 @@ void get_random_info(char seed[16]) {
 
 #endif
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #include <wincrypt.h>
 #include <windows.h>
 
@@ -142,30 +142,37 @@ uint32_t get_secure_random(void) {
     uint32_t num = 0;
     HCRYPTPROV hProv = 0;
     if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL,
-                             CRYPT_VERIFYCONTEXT))
+                             CRYPT_VERIFYCONTEXT)) {
+        // TODO(CK): You might want to log this error or handle differently
         return 0;  // error
-    if (!CryptGenRandom(hProv, sizeof(num), (BYTE *)&num))
+    }
+
+    if (!CryptGenRandom(hProv, sizeof(num), (BYTE *)&num)) {
+        // TODO(CK): You might want to log this error or handle differently
         num = 0;  // error
+    }
     CryptReleaseContext(hProv, 0);
     return num;
 }
 
 #elif defined(__linux__)
-#include <errno.h>
 #include <fcntl.h>
-#include <stdint.h>
 #include <unistd.h>
 
 uint32_t get_secure_random(void) {
     uint32_t num;
     int fd = open("/dev/urandom", O_RDONLY);
-    if (fd < 0)
+    if (fd < 0) {
+        // TODO(CK): You might want to log this error or handle differently
         return 0;  // error
+    }
 
     ssize_t result = read(fd, &num, sizeof(num));
     close(fd);
-    if (result != sizeof(num))
+    if (result != sizeof(num)) {
+        // TODO(CK): You might want to log this error or handle differently
         return 0;  // error
+    }
 
     return num;
 }

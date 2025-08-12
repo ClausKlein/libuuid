@@ -17,7 +17,6 @@ add_library(
     uuid.h
     md5.h
     md5c.c
-    global.h
 )
 target_include_directories(uuid PUBLIC "$<INSTALL_INTERFACE:include>")
 

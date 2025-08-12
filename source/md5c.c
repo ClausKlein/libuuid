@@ -52,9 +52,10 @@ static void Encode(uint8_t * /*output*/, const uint64_t * /*input*/,
                    unsigned int /*len*/);
 static void Decode(uint64_t * /*output*/, const uint8_t * /*input*/,
                    unsigned int /*len*/);
-static void MD5_memcpy(POINTER /*output*/, const POINTER /*input*/,
+static void MD5_memcpy(uint8_t * /*output*/, const uint8_t * /*input*/,
                        unsigned int /*len*/);
-static void MD5_memset(POINTER /*output*/, int /*value*/, unsigned int /*len*/);
+static void MD5_memset(uint8_t * /*output*/, int /*value*/,
+                       unsigned int /*len*/);
 
 static uint8_t PADDING[64] = {
         0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -141,7 +142,7 @@ void MD5Update(MD5_CTX *context,     /* context */
     /* Transform as many times as possible.
      */
     if (inputLen >= partLen) {
-        MD5_memcpy((POINTER)&context->buffer[index], (POINTER)input, partLen);
+        MD5_memcpy((&context->buffer[index]), input, partLen);
         MD5Transform(context->state, context->buffer);
 
         for (i = partLen; i + 63 < inputLen; i += 64) {
@@ -154,8 +155,7 @@ void MD5Update(MD5_CTX *context,     /* context */
     }
 
     /* Buffer remaining input */
-    MD5_memcpy((POINTER)&context->buffer[index], (POINTER)&input[i],
-               inputLen - i);
+    MD5_memcpy((&context->buffer[index]), (&input[i]), inputLen - i);
 }
 
 /* MD5 finalization. Ends an MD5 message-digest operation, writing the
@@ -185,7 +185,7 @@ void MD5Final(uint8_t digest[16], /* message digest */
 
     /* Zeroize sensitive information.
      */
-    MD5_memset((POINTER)context, 0, sizeof(*context));
+    MD5_memset((uint8_t *)context, 0, sizeof(*context));
 }
 
 /* MD5 basic transformation. Transforms state based on block.
@@ -279,7 +279,7 @@ static void MD5Transform(uint64_t state[4], uint8_t block[64]) {
 
     /* Zeroize sensitive information.
      */
-    MD5_memset((POINTER)x, 0, sizeof(x));
+    MD5_memset((uint8_t *)x, 0, sizeof(x));
 }
 
 /* Encodes input (uint64_t) into output (uint8_t). Assumes len is
@@ -314,7 +314,8 @@ static void Decode(uint64_t *output, const uint8_t *input, unsigned int len) {
 /* Note: Replace "for loop" with standard memcpy if possible.
  */
 
-static void MD5_memcpy(POINTER output, const POINTER input, unsigned int len) {
+static void MD5_memcpy(uint8_t *output, const uint8_t *input,
+                       unsigned int len) {
     unsigned int i;
 
     for (i = 0; i < len; i++) {
@@ -324,7 +325,7 @@ static void MD5_memcpy(POINTER output, const POINTER input, unsigned int len) {
 
 /* Note: Replace "for loop" with standard memset if possible.
  */
-static void MD5_memset(POINTER output, int value, unsigned int len) {
+static void MD5_memset(uint8_t *output, int value, unsigned int len) {
     unsigned int i;
 
     for (i = 0; i < len; i++) {

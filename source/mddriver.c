@@ -90,7 +90,7 @@ static void MDString(char *string) {
 
     printf("MD%d (\"%s\") = ", MD, string);
     MDPrint(digest);
-    putchar('\n');
+    (void)putchar('\n');
 }
 
 /* Measures the time to digest TEST_BLOCK_COUNT TEST_BLOCK_LEN-byte
@@ -113,7 +113,7 @@ static void MDTimeTrial() {
     }
 
     /* Start timer */
-    time(&startTime);
+    (void)time(&startTime);
 
     /* Digest blocks */
     MDInit(&context);
@@ -123,7 +123,7 @@ static void MDTimeTrial() {
     MDFinal(digest, &context);
 
     /* Stop timer */
-    time(&endTime);
+    (void)time(&endTime);
 
     printf(" done\n");
     printf("Digest = ");
@@ -173,11 +173,11 @@ static void MDFile(const char *filename) {
     }
     MDFinal(digest, &context);
 
-    fclose(file);
+    (void)fclose(file);
 
     printf("MD%d (%s) = ", MD, filename);
     MDPrint(digest);
-    putchar('\n');
+    (void)putchar('\n');
 }
 
 /* Digests the standard input and prints the result.
@@ -195,7 +195,7 @@ static void MDFilter(void) {
     MDFinal(digest, &context);
 
     MDPrint(digest);
-    putchar('\n');
+    (void)putchar('\n');
 }
 
 /* Prints a message digest in hexadecimal.

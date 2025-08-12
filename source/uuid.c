@@ -100,9 +100,11 @@ int read_state(uint16_t *clockseq, uuid_time_t *timestamp, uuid_node_t *node) {
         if (fp == NULL) {
             return 0;
         }
-        fread(&st, sizeof st, 1, fp);
-        fclose(fp);
-        inited = 1;
+
+        if (fread(&st, sizeof(st), 1, fp) == 1) {
+            inited = 1;  // Successfully read node from file
+        }
+        (void)fclose(fp);
     }
     *clockseq = st.cs;
     *timestamp = st.ts;
@@ -131,10 +133,13 @@ void write_state(uint16_t clockseq, uuid_time_t timestamp, uuid_node_t node) {
         if (fp == NULL) {
             return;
         }
-        fwrite(&st, sizeof st, 1, fp);
-        fclose(fp);
-        /* schedule next save for 10 seconds from now */
-        next_save = timestamp + (10 * 10 * 1000 * 1000);
+
+        if (fwrite(&st, sizeof(st), 1, fp) == 1) {
+            // Successfully wrote node to file
+            /* schedule next save for 10 seconds from now */
+            next_save = timestamp + (10 * 10 * 1000 * 1000);
+        }
+        (void)fclose(fp);
     }
 }
 
